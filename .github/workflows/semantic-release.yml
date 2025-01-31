@@ -37,6 +37,7 @@ jobs:
           ls -la
           tar --exclude=".git" \
               --exclude="*/.git" \
+              --transform 'flags=r;s,^,package/,' \
               -czf action-main-release-trials.tar.gz .
       
 
