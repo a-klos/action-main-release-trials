@@ -40,7 +40,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const conclusion = steps.run_tests.outcome === 'success' ? 'success' : 'failure';
+            const conclusion = github.context.payload.workflow_run.conclusion === 'success' ? 'success' : 'failure';
             await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
