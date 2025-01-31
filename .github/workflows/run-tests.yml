@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  test:
+  update-submodules:
     name: Perform tests
     runs-on: ubuntu-latest
     steps:
@@ -37,9 +37,14 @@ jobs:
           else
             echo "No submodule changes."
           fi
+  
+  run-tests:
+    needs: update-submodules
+    name: Perform tests
+    runs-on: ubuntu-latest
+    steps:
 
       - name: Setup Python
-        needs: update_submodules
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
