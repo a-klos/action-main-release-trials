@@ -34,15 +34,14 @@ jobs:
       - name: Create TAR archive (includes submodules)
         run: |
           mkdir -p /tmp/release-package
-          cp -r . /tmp/release-package/
-          cd /tmp/release-package
-          pwd
-          ls -la
-          tar --exclude=".git" \
+          cd $GITHUB_WORKSPACE
+          tar --warning=no-file-changed \
+              --ignore-failed-read \
+              --exclude=".git" \
               --exclude="*/.git" \
               --transform 'flags=r;s,^,package/,' \
-              -czf action-main-release-trials.tar.gz .
-          mv action-main-release-trials.tar.gz $GITHUB_WORKSPACE/
+              -czf /tmp/release-package/action-main-release-trials.tar.gz .
+          mv /tmp/release-package/action-main-release-trials.tar.gz .
       
 
 
