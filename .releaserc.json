@@ -9,11 +9,11 @@
         "assets": [
           {
             "path": "action-main-release-trials.tar.gz",
-            "label": "Source code (tar.gz)"
+            "label": "Source code with submodules (tar.gz)"
           },
           {
             "path": "action-main-release-trials.zip",
-            "label": "Source code (zip)"
+            "label": "Source code with submodules (zip)"
           }
         ]
       }

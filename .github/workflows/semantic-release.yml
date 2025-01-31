@@ -35,24 +35,15 @@ jobs:
         run: |
           mkdir -p /tmp/release-package
           cd $GITHUB_WORKSPACE
-          tar --warning=no-file-changed \
-              --ignore-failed-read \
-              --exclude=".git" \
-              --exclude="*/.git" \
-              --transform 'flags=r;s,^,package/,' \
-              -czf /tmp/release-package/action-main-release-trials.tar.gz .
+          tar -czf /tmp/release-package/action-main-release-trials.tar.gz .
           mv /tmp/release-package/action-main-release-trials.tar.gz .
-      
 
-
-      # - name: Create ZIP archive (includes submodules)
-      #   run: |
-      #     zip -r action-main-release-trials.zip .
-
-      # - name: Create custom tarball including submodule
-      #   run: |
-      #     # You can exclude things you don't want with '--exclude'
-      #     tar -czf action-main-release-trials.tar.gz .
+      - name: Create TAR archive (includes submodules)
+        run: |
+          mkdir -p /tmp/release-package
+          cd $GITHUB_WORKSPACE
+          zip -r /tmp/release-package/action-main-release-trials.zip .
+          mv /tmp/release-package/action-main-release-trials.tar.gz .
 
       - name: Install dependencies
         run: npm ci
