@@ -33,6 +33,7 @@ jobs:
 
       - name: Create TAR archive (includes submodules)
         run: |
+          pwd
           tar --exclude=".git" \
               --exclude="*/.git" \
               -czf action-main-release-trials.tar.gz .
