@@ -4,8 +4,7 @@ on:
     workflows: ["Update Submodules"]
     types:
       - completed
-    branches:
-      - main
+
 
 permissions:
   contents: write
