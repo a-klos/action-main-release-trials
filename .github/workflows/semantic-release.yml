@@ -27,17 +27,10 @@ jobs:
 
       - name: Update submodules to latest commit on main
         run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
           git submodule sync --recursive
           git submodule update --init --remote --recursive
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "Submodules have new commits. Committing and pushing..."
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git commit -am "chore: update submodules to latest main"
-            git push
-          else
-            echo "No submodule changes."
-          fi
+          
 
       - name: Install dependencies
         run: npm ci
@@ -49,3 +42,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+
+# if [ -n "$(git status --porcelain)" ]; then
+#     echo "Submodules have new commits. Committing and pushing..."
+#     git config user.name "github-actions[bot]"
+#     git config user.email "github-actions[bot]@users.noreply.github.com"
+#     git commit -am "chore: update submodules to latest main"
+#     git push
+#   else
+#     echo "No submodule changes."
+#   fi
