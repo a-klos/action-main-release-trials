@@ -23,5 +23,8 @@ jobs:
       - name: Run tests
         run: |
           pip install pytest
+          ls -la
           pytest
 #something:D
+#something more ^^
+
