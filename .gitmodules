@@ -1,3 +1,6 @@
-[submodule "mylib"]
-    path = mylib
+[submodule "my-submodule"]
+    path = my-submodule
     url = git@github.com:a-klos/action-submodule-release-trials.git
+[submodule "action-submodule-release-trials"]
+	path = action-submodule-release-trials
+	url = git@github.com:a-klos/action-submodule-release-trials.git
