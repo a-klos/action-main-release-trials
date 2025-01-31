@@ -18,9 +18,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
           submodules: false
 
       - name: Update submodules to latest commit on main and commit if necessary
+        id: update_submodules
         run: |
           git config --global url."https://github.com/".insteadOf "git@github.com:"
           git submodule sync --recursive
@@ -37,6 +39,7 @@ jobs:
           fi
 
       - name: Setup Python
+        needs: update_submodules
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
