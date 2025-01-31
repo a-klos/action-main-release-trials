@@ -3,46 +3,49 @@ on:
   push:
     branches:
       - main
- 
+
 permissions:
-  contents: write  # Für Push-Berechtigungen
- 
+  contents: read
+
 jobs:
   release:
+    name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout (mit Submodulen)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Vollständiger Commit-Verlauf
-          submodules: recursive  # Submodule initialisieren
- 
-      - name: Update Submodule auf neueste Version
+          fetch-depth: 0
+          submodules: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.1"
+
+      - name: Update submodules to latest commit on main
         run: |
           git submodule sync --recursive
-          git submodule update --init --remote --recursive --force
- 
-      - name: Submodule-Änderungen erkennen und committen
-        id: commit-submodules
-        run: |
-          # Prüfe, ob Submodule-Änderungen vorliegen
-          if git diff --submodule=log --exit-code; then
-            echo "Keine Submodule-Änderungen erkannt."
-            echo "submodules_updated=false" >> $GITHUB_OUTPUT
+          git submodule update --init --remote --recursive
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Submodules have new commits. Committing and pushing..."
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -am "chore: update submodules to latest main"
+            git push
           else
-            echo "Submodule-Änderungen erkannt. Committe sie..."
-            git config user.name "GitHub Actions"
-            git config user.email "actions@github.com"
-            git add -A  # Füge alle Änderungen hinzu (inkl. Submodule-SHAs)
-            git commit -m "fix(submodules): Update Submodule [skip ci]"
-            echo "submodules_updated=true" >> $GITHUB_OUTPUT
+            echo "No submodule changes."
           fi
- 
-      - name: Push Submodule-Änderungen (falls erforderlich)
-        if: steps.commit-submodules.outputs.submodules_updated == 'true'
-        run: git push
- 
-      - name: Semantic Release
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
