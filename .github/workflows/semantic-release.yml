@@ -1,29 +1,29 @@
-name: Semantic Release
+name: semantic-release
 on:
   push:
     branches:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  release:
-    name: Release
+  semantic-release:
+    name: semantic-release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: false
 
-      - name: Setup Node.js
+      - name: setup-node
         uses: actions/setup-node@v4
         with:
           node-version: "22.13.1"
 
-      - name: Create archives
+      - name: create-archives
         run: |
           TEMP_DIR=$(mktemp -d)
           tar --warning=no-file-changed \
@@ -36,13 +36,13 @@ jobs:
           mv "$TEMP_DIR"/*.{tar.gz,zip} .
           rm -rf "$TEMP_DIR"
 
-      - name: Install dependencies
+      - name: install-dependencies
         run: npm ci
 
-      - name: Verify dependencies integrity
+      - name: verify-dependencies-integrity
         run: npm audit signatures
 
-      - name: Release
+      - name: create-semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
