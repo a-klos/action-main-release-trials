@@ -30,7 +30,11 @@ jobs:
           git config --global url."https://github.com/".insteadOf "git@github.com:"
           git submodule sync --recursive
           git submodule update --init --remote --recursive
-          
+
+      - name: Debug submodule contents
+        run: |
+          ls -la action-submodule-release-trials
+
 
       - name: Install dependencies
         run: npm ci
