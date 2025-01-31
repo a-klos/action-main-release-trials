@@ -1,27 +1,40 @@
 name: Perform tests
 on:
-  workflow_run:
-    workflows: ["Update Submodules"]
-    types:
-      - completed
+  pull_request:
+    branches:
+    - main
   workflow_dispatch:
 
 
 permissions:
   contents: write
-  checks: write
 
 jobs:
   test:
     name: Perform tests
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: false
+
+      - name: Update submodules to latest commit on main and commit if necessary
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git submodule sync --recursive
+          git submodule update --init --remote --recursive
+
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Submodules have new commits. Committing and pushing..."
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -am "chore: update submodules to latest main"
+            git push
+          else
+            echo "No submodule changes."
+          fi
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -35,21 +48,3 @@ jobs:
           ls -la
           pytest
 
-      - name: Create status check
-        if: always()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const conclusion = context.payload.workflow_run.conclusion === 'success' ? 'success' : 'failure';
-            await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'Perform tests',
-              head_sha: context.sha,
-              status: 'completed',
-              conclusion: conclusion,
-              output: {
-                  title: 'Test Results',
-                  summary: `The tests have ${conclusion}.`
-              }
-            });
