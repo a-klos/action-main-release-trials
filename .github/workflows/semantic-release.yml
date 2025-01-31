@@ -31,6 +31,14 @@ jobs:
           git submodule sync --recursive
           git submodule update --init --remote --recursive
 
+      - name: Create TAR archive (includes submodules)
+        run: |
+          tar --warning=no-file-changed \
+              --warning=no-file-removed \
+              -czf my-project-with-submodules.tar.gz .
+      
+
+
       - name: Create ZIP archive (includes submodules)
         run: |
           zip -r action-main-release-trials.zip .
