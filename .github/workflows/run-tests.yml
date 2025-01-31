@@ -1,53 +1,53 @@
 name: Perform tests
 on:
-    workflow_run:
-        workflows: ["Update Submodules"]
-        types:
-            - completed
+  workflow_run:
+    workflows: ["Update Submodules"]
+    types:
+      - completed
 
 permissions:
-    contents: write
-    checks: write
+  contents: write
+  checks: write
 
 jobs:
-    update:
-        name: Perform tests
-        runs-on: ubuntu-latest
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
-        steps:
-          - name: Checkout
-            uses: actions/checkout@v4
-            with:
-              fetch-depth: 0
-              submodules: false
+  test:
+    name: Perform tests
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false
 
-          - name: Setup Python
-            uses: actions/setup-python@v4
-            with:
-              python-version: '3.9'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-          - name: Run tests
-            id: run_tests
-            run: |
-              pip install pytest
-              ls -la
-              pytest
+      - name: Run tests
+        id: run_tests
+        run: |
+          pip install pytest
+          ls -la
+          pytest
 
-          - name: Create status check
-            if: always()
-            uses: actions/github-script@v6
-            with:
-              script: |
-                const conclusion = steps.run_tests.outcome === 'success' ? 'success' : 'failure';
-                await github.rest.checks.create({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  name: 'Perform tests',
-                  head_sha: context.sha,
-                  status: 'completed',
-                  conclusion: conclusion,
-                  output: {
-                      title: 'Test Results',
-                      summary: `The tests have ${conclusion}.`
-                  }
-                });
+      - name: Create status check
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const conclusion = steps.run_tests.outcome === 'success' ? 'success' : 'failure';
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Perform tests',
+              head_sha: context.sha,
+              status: 'completed',
+              conclusion: conclusion,
+              output: {
+                  title: 'Test Results',
+                  summary: `The tests have ${conclusion}.`
+              }
+            });
