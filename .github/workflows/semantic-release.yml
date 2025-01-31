@@ -37,8 +37,6 @@ jobs:
           ls -la
           tar --exclude=".git" \
               --exclude="*/.git" \
-              --warning=no-file-changed \
-              --warning=no-file-removed \
               -czf action-main-release-trials.tar.gz .
       
 
