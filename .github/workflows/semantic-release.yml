@@ -27,18 +27,18 @@ jobs:
         with:
           node-version: "22.13.1"
 
-      - name: Create archives
-        run: |
-          TEMP_DIR=$(mktemp -d)
-          tar --warning=no-file-changed \
-              --exclude=".git" \
-              --exclude="/.git" \
-              --exclude="node_modules" \
-              -czf "$TEMP_DIR/action-main-release-trials.tar.gz" .
-          zip -r "$TEMP_DIR/action-main-release-trials.zip" . \
-              -x ".git" "node_modules"
-          mv "$TEMP_DIR"/.{tar.gz,zip} .
-          rm -rf "$TEMP_DIR"
+      # - name: Create archives
+      #   run: |
+      #     TEMP_DIR=$(mktemp -d)
+      #     tar --warning=no-file-changed \
+      #         --exclude=".git" \
+      #         --exclude="/.git" \
+      #         --exclude="node_modules" \
+      #         -czf "$TEMP_DIR/action-main-release-trials.tar.gz" .
+      #     zip -r "$TEMP_DIR/action-main-release-trials.zip" . \
+      #         -x ".git" "node_modules"
+      #     mv "$TEMP_DIR"/.{tar.gz,zip} .
+      #     rm -rf "$TEMP_DIR"
 
       - name: Install dependencies
         run: npm ci
