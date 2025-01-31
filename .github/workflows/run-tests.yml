@@ -25,7 +25,6 @@ jobs:
           pip install pytest
           ls -la
           pytest
-#something:D
-#something more ^^#something more ^^
-#something more ^^
+
+# awesome action
 
