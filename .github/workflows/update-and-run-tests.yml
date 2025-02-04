@@ -1,16 +1,17 @@
-name: Update Submodules
+name: Perform tests
 on:
   pull_request:
     branches:
     - main
   workflow_dispatch:
 
+
 permissions:
   contents: write
 
 jobs:
-  update:
-    name: Update Submodules
+  update-submodules:
+    name: Perform tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,12 +21,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           submodules: false
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22.13.1"
-
-      - name: Update submodules to latest commit on main
+      - name: Update submodules to latest commit on main and commit if necessary
+        id: update_submodules
         run: |
           git config --global url."https://github.com/".insteadOf "git@github.com:"
           git submodule sync --recursive
@@ -40,3 +37,34 @@ jobs:
           else
             echo "No submodule changes."
           fi
+  
+  run-tests:
+    needs: update-submodules
+    name: Perform tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Check submodules commit
+        run: |
+          echo "Checked out submodules commit(s):"
+          git submodule status --recursive
+
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Run tests
+        id: run_tests
+        run: |
+          pip install pytest
+          ls -la
+          pytest
+
