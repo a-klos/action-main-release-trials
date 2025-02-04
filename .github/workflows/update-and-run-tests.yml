@@ -48,6 +48,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: false
+          ref: ${{ github.sha }}
 
       - name: Setup Python
         uses: actions/setup-python@v4
