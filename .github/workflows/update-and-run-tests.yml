@@ -47,8 +47,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: false
+          submodules: true
           ref: ${{ github.sha }}
+
+      - name: Check submodules commit
+        run: |
+          echo "Checked out submodules commit(s):"
+          git submodule status --recursive
+
 
       - name: Setup Python
         uses: actions/setup-python@v4
