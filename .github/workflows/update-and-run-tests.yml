@@ -48,7 +48,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: true
-          ref: ${{ github.sha }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Check submodules commit
         run: |
